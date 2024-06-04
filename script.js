@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Define a scale for the stroke width
         const strokeWidthScale = d3.scaleLinear()
             .domain([0, maxMigration])
-            .range([1, 5]);
+            .range([1, 15]);
 
         // Draw states
         svg.selectAll("path")
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("class", "to")
             .attr("d", d => generateCurvePath(californiaCentroid, d.centroid))
             .attr("stroke", "#bd2300")
-            .attr("stroke-width", d => strokeWidthScale(d.going_to_california)**1.5)
+            .attr("stroke-width", d => strokeWidthScale(d.going_to_california)*1.5)
             .attr("fill", "none")
             .attr("marker-end", "url(#arrowhead-red)");
 
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("class", "from")
             .attr("d", d => generateCurvePath_2(d.centroid, californiaCentroid))
             .attr("stroke", "#45d985")
-            .attr("stroke-width", d => strokeWidthScale(d.coming_from_california)**2)
+            .attr("stroke-width", d => strokeWidthScale(d.coming_from_california)*1.5)
             .attr("fill", "none")
             .attr("marker-end", "url(#arrowhead-green)");
         // ####
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("class", "to")
             .attr("d", d => generateCurvePath(californiaCentroid2, d.centroid))
             .attr("stroke", "#bd2300")
-            .attr("stroke-width", d => strokeWidthScale(d.going_to_california2)**1.5)
+            .attr("stroke-width", d => strokeWidthScale(d.going_to_california2)*1.5)
             .attr("fill", "none")
             .attr("marker-end", "url(#arrowhead-red)");
 
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("class", "from")
             .attr("d", d => generateCurvePath_2(d.centroid, californiaCentroid2))
             .attr("stroke", "#45d985")
-            .attr("stroke-width", d => strokeWidthScale(d.coming_from_california2)**2)
+            .attr("stroke-width", d => strokeWidthScale(d.coming_from_california2)*1.5)
             .attr("fill", "none")
             .attr("marker-end", "url(#arrowhead-green)");
 
