@@ -63,3 +63,28 @@ header {
   margin: 10px;
   padding: 10px;
 }
+
+#map-container2 {
+  width: 100%;
+  overflow: auto; /* Enable scrolling within the map container */
+}
+
+#map2 {
+  width: 800px;
+  height: 500px;
+  border: 1px solid black;
+}
+
+#tooltip-line2, #tooltip2 {
+  position: absolute;
+  text-align: center;
+  width: auto;
+  height: auto;
+  padding: 8px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+  visibility: hidden;
+}

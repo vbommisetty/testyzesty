@@ -85,22 +85,30 @@ document.addEventListener('DOMContentLoaded', function() {
         .translate([width / 1.75, height / 1.45])
         .scale(1000);
     const path = d3.geoPath().projection(projection);
+    const path2 = d3.geoPath().projection(projection);
     const svg = d3.select("#map");
     const tooltip = d3.select("#tooltip");
+    const svg2 = d3.select("#map2");
+    const tooltip2 = d3.select("#tooltip2");
 
     Promise.all([
         d3.json('us-states.geojson'),
-        d3.json('2008_data.json')
-    ]).then(function([geojsonData, stateData]) {
+        d3.json('2008_data.json'),
+        d3.json('2022_data.json')
+    ]).then(function([geojsonData, stateData,stateData2]) {
         geojsonData.features.forEach(feature => {
             const stateInfo = stateData[feature.properties.name];
+            const stateInfo2 = stateData2[feature.properties.name];
             if (stateInfo) {
                 feature.properties.going_to_california = +stateInfo.going_to_california;
+                feature.properties.going_to_california2 = +stateInfo2.going_to_california;
                 feature.properties.coming_from_california = +stateInfo.coming_from_california;
+                feature.properties.coming_from_california2 = +stateInfo2.coming_from_california;
             }
         });
 
-        const maxMigration = d3.max(geojsonData.features, d => Math.max(d.properties.going_to_california, d.properties.coming_from_california));
+        const maxMigration = d3.max(geojsonData.features, d => Math.max(d.properties.going_to_california, d.properties.coming_from_california,d.properties.going_to_california2, d.properties.coming_from_california2 ));
+        
         const colorScale = d3.scaleLinear()
             .domain([0, maxMigration])
             .range(["#3d3d3d", "#3d3d3d"]);
@@ -219,5 +227,103 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("stroke-width", d => strokeWidthScale(d.coming_from_california)**2)
             .attr("fill", "none")
             .attr("marker-end", "url(#arrowhead-green)");
+        // ####
+        svg2.selectAll("path")
+            .data(geojsonData.features)
+            .enter()
+            .append("path")
+            .attr("d", path2)
+            .attr("fill", d => d.properties.name === "California" ? "#f2a724" : colorScale(d.properties.going_to_california2))
+            .attr("stroke", "white")
+            .attr("stroke-width", "2.5")
+            .on("mouseover", function(event, d) {
+                d3.select(this).attr("fill", "#ff9ee7");
+                tooltip2
+                    .style("left", (event.pageX + 20) + "px")
+                    .style("top", (event.pageY - 20) + "px")
+                    .style("visibility", "visible")
+                    .html(`State: ${d.properties.name}<br>Going to California: ${d.properties.going_to_california2}<br>Coming from California: ${d.properties.coming_from_california2}`);
+            })
+            .on("mousemove", function(event, d) {
+                tooltip2
+                    .style("left", (event.pageX + 20) + "px")
+                    .style("top", (event.pageY - 20) + "px");
+            })
+            .on("mouseout", function(event, d) {
+                d3.select(this).attr("fill", d.properties.name === "California" ? "#f2a724" : colorScale(d.properties.going_to_california2));
+                tooltip2.style("visibility", "hidden");
+            });
+
+        // Define arrow markers
+        svg2.append("defs").append("marker")
+            .attr("id", "arrowhead-green")
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 5)
+            .attr("refY", 5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 Z")
+            .attr("fill", "#45d985");
+
+        svg2.append("defs").append("marker")
+            .attr("id", "arrowhead-red")
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 5)
+            .attr("refY", 5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 Z")
+            .attr("fill", "#bd2300");
+
+        // Calculate centroids and filter states with migration > 20000
+        const centroids2 = geojsonData.features.map(feature => {
+            const centroid2 = path2.centroid(feature);
+            return {
+                name: feature.properties.name,
+                centroid: centroid2,
+                going_to_california2: feature.properties.going_to_california2,
+                coming_from_california2: feature.properties.coming_from_california2
+            };
+        });
+
+        // Filter states with migration > 20000 and exclude California itself
+        const backfilteredCentroids2 = centroids2.filter(d => d.going_to_california2 - d.coming_from_california2 > 4500 && d.name !== "California");
+
+        // Filter states with migration > 10000 and exclude California itself
+        const filteredCentroids2 = centroids2.filter(d => d.going_to_california2 - d.coming_from_california2 < -10000 && d.name !== "California");
+
+        const californiaCentroid2 = centroids2.find(d => d.name === "California").centroid;
+        
+
+
+        // Draw curved paths from California to each filtered state centroid
+        svg2.selectAll("path.to")
+            .data(filteredCentroids2)
+            .enter()
+            .append("path")
+            .attr("class", "to")
+            .attr("d", d => generateCurvePath(californiaCentroid2, d.centroid))
+            .attr("stroke", "#bd2300")
+            .attr("stroke-width", d => strokeWidthScale(d.going_to_california2)**1.5)
+            .attr("fill", "none")
+            .attr("marker-end", "url(#arrowhead-red)");
+
+        // Draw curved paths from each filtered state centroid back to California
+        svg2.selectAll("path.from")
+            .data(backfilteredCentroids2)
+            .enter()
+            .append("path")
+            .attr("class", "from")
+            .attr("d", d => generateCurvePath_2(d.centroid, californiaCentroid2))
+            .attr("stroke", "#45d985")
+            .attr("stroke-width", d => strokeWidthScale(d.coming_from_california2)**2)
+            .attr("fill", "none")
+            .attr("marker-end", "url(#arrowhead-green)");
+
+        
     });
 });
