@@ -13,11 +13,16 @@ document.addEventListener('DOMContentLoaded', function() {
             { year: 2013, population: 38253768, change: 0.81 },
             { year: 2012, population: 37944551, change: 0.82 },
             { year: 2011, population: 37636311, change: 0.85 },
-            { year: 2010, population: 37319550, change: 0.97 }
+            { year: 2010, population: 37319550, change: 0.97 },
+            { year: 2009, population: 36961229, change: 0.0},
+            { year: 2008, population: 36604337, change: 0.0},
+            { year: 2007, population: 36250311, change: 0.0},
+            { year: 2006, population: 36021202, change: 0.0},
+            { year: 2005, population: 35827943, change: 0.0},
         ];
     
         // Line plot setup
-        const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+        const margin = { top: 20, right: 30, bottom: 30, left: 60 };
         const width = 800 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
     
@@ -26,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .range([0, width]);
     
         const y = d3.scaleLinear()
-            .domain([d3.min(lineData, d => d.population) + 100000, d3.max(lineData, d => d.population)])
+            .domain([d3.min(lineData, d => d.population)-500000, d3.max(lineData, d => d.population)])
             .range([height, 0]);
     
         const line = d3.line()
@@ -151,8 +156,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("viewBox", "0 0 10 10")
             .attr("refX", 5)
             .attr("refY", 5)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
+            .attr("markerWidth", 4)
+            .attr("markerHeight", 4)
             .attr("orient", "auto")
             .append("path")
             .attr("d", "M 0 0 L 10 5 L 0 10 Z")
@@ -163,8 +168,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("viewBox", "0 0 10 10")
             .attr("refX", 5)
             .attr("refY", 5)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
+            .attr("markerWidth", 4)
+            .attr("markerHeight", 4)
             .attr("orient", "auto")
             .append("path")
             .attr("d", "M 0 0 L 10 5 L 0 10 Z")
@@ -260,8 +265,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("viewBox", "0 0 10 10")
             .attr("refX", 5)
             .attr("refY", 5)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
+            .attr("markerWidth", 4)
+            .attr("markerHeight", 4)
             .attr("orient", "auto")
             .append("path")
             .attr("d", "M 0 0 L 10 5 L 0 10 Z")
@@ -272,8 +277,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("viewBox", "0 0 10 10")
             .attr("refX", 5)
             .attr("refY", 5)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 6)
+            .attr("markerWidth", 4)
+            .attr("markerHeight", 4)
             .attr("orient", "auto")
             .append("path")
             .attr("d", "M 0 0 L 10 5 L 0 10 Z")
